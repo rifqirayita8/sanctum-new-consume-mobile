@@ -5,39 +5,24 @@ class ApiService {
 
   ApiService() {
     _dio.options.baseUrl = 'https://sanctum-new-production.up.railway.app/api';
+    _dio.options.receiveTimeout = const Duration(milliseconds: 20000);
+    _dio.options.connectTimeout = const Duration(milliseconds: 20000);
   }
 
-  Future<Response> login(String email, String password) async {
+  Future<void> logout(String token) async {
     try {
-      final Response response = await _dio.post(
-        '/login',
-        data: {
-          'email': email,
-          'password': password,
-        },
-      );
-      return response;
-    } catch (e) {
-      print('Error Logging User: $e');
-      throw e;
-    }
-  }
-
-  static Future<void> logout(String token) async {
-    try {
-      Response response = await _dio.post('/logout',
+      await _dio.get('/logout',
           options: Options(headers: {
-            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
           }));
-
-      if (response.statusCode == 200) {
-        print('Logout Success');
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Error response status: ${e.response?.statusCode}');
+        print('Error response data: ${e.response?.data}');
       } else {
-        print('Logout Failed');
+        print('Error sending request: $e');
       }
-    } catch (e) {
-      print('Error Logging User: $e');
-      throw e;
     }
   }
 }
