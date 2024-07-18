@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:sanctum_mobile/services/api_service.dart';
 import 'package:sanctum_mobile/services/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -13,6 +14,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final ApiService apiService = ApiService();
 
   @override
   void initState() {
@@ -31,45 +33,18 @@ class _LoginPageState extends State<LoginPage> {
     print('Email: ${_emailController.text}');
     print('Password: ${_passwordController.text}');
 
-    Dio dio = Dio();
+    var result =
+        await apiService.login(_emailController.text, _passwordController.text);
 
-    dio.options.receiveTimeout = const Duration(milliseconds: 20000);
-    dio.options.connectTimeout = const Duration(milliseconds: 20000);
-
-    try {
-      Response response = await dio.post(
-        'https://sanctum-new-production.up.railway.app/api/login',
-        data: FormData.fromMap({
-          'email': _emailController.text,
-          'password': _passwordController.text,
-        }),
-        options: Options(
-          headers: {
-            'Accept': 'application/json',
-          },
-        ),
-      );
-
-      print('Response status: ${response.statusCode}');
-      print('Response data: ${response.data}');
-
-      if (response.statusCode == 200 && response.data['status'] == true) {
-        var sharedPreferences =
-            SharedPreferencesProvider.of(context)?.sharedPreferences;
-        if (sharedPreferences != null) {
-          await sharedPreferences.setString('token', response.data['token']);
-          Navigator.of(context).pushReplacementNamed('/home');
-        }
-      } else {
-        print('Shared Preferences Instance is null');
+    if (result['status']) {
+      var sharedPreferences =
+          SharedPreferencesProvider.of(context)?.sharedPreferences;
+      if (sharedPreferences != null) {
+        await sharedPreferences.setString('token', result['token']);
+        Navigator.of(context).pushReplacementNamed('/home');
       }
-    } on DioException catch (e) {
-      if (e.response != null) {
-        print('Error response status: ${e.response?.statusCode}');
-        print('Error response data: ${e.response?.data}');
-      } else {
-        print('Error sending request: $e');
-      }
+    } else {
+      print('Login failed: ${result['message']}');
     }
   }
 
