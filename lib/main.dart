@@ -19,7 +19,10 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return SharedPreferencesProvider(
       sharedPreferences: sharedPreferences,
-      child: const MaterialApp(
+      child: MaterialApp(
+        theme: ThemeData(
+          fontFamily: 'Helvetica'
+        ),
         debugShowCheckedModeBanner: false,
         // home: LoginPage(),
         initialRoute: Routes.login,

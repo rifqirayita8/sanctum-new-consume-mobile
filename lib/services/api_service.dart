@@ -11,25 +11,27 @@ class ApiService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      Response response = await _dio.post('/login',
-          data: FormData.fromMap({'email': email, 'password': password}),
-          options: Options(headers: {
-            'Accept': 'application/json',
-          }));
+      Response response = await _dio.post(
+        '/login',
+        data: FormData.fromMap({'email': email, 'password': password}),
+        options: Options(headers: {
+          'Accept': 'application/json',
+        })
+      );
 
       if (response.statusCode == 200 && response.data['status'] == true) {
         return {'status': true, 'token': response.data['token']};
       } else {
         return {'status': false, 'message': response.data['message']};
       }
-    } on DioException catch (e) {
+    } on DioException catch (e, trace) {
       if (e.response != null) {
         print('Error response status: ${e.response?.statusCode}');
         print('Error response data: ${e.response?.data}');
       } else {
         print('Error sending request: $e');
       }
-      return {'status': false, 'message': 'Error sending request'};
+      return {'status': false, 'message': 'Error sending request: $e, trace: $trace'};
     }
   }
 
@@ -47,6 +49,33 @@ class ApiService {
       } else {
         print('Error sending request: $e');
       }
+    }
+  }
+
+  Future<Map<String, dynamic>> register(String name, String email, String password) async {
+    try {
+      Response response= await _dio.post(
+        '/register',
+        data: FormData.fromMap({
+          'name': name,
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200 && response.data['status'] == true) {
+        return {'status': true, 'message': response.data['message']};
+      } else {
+        return {'status': false, 'message': response.data['message']};
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print('Error response status: ${e.response?.statusCode}');
+        print('Error response data: ${e.response?.data}');
+      } else {
+        print('Error sending request : $e');
+      }
+      return {'status': false, 'message': 'Error sending request: $e'};
     }
   }
 }

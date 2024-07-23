@@ -10,7 +10,7 @@ class Routes {
     switch (settings.name) {
       case Routes.login:
         return MaterialPageRoute(
-            settings: settings, builder: (_) => LoginPage());
+            settings: settings, builder: (_) => const LoginPage());
 
       case Routes.home:
         return MaterialPageRoute(
