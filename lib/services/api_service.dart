@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final Dio _dio = Dio();
@@ -13,10 +14,18 @@ class ApiService {
     try {
       Response response = await _dio.post(
         '/login',
-        data: FormData.fromMap({'email': email, 'password': password}),
-        options: Options(headers: {
+        data: FormData.fromMap({
+          'email': email, 
+          'password': password
+          }
+        ),
+        options: Options(
+          headers: {
           'Accept': 'application/json',
-        })
+          },
+          sendTimeout: const Duration(milliseconds: 10000),
+          receiveTimeout: const Duration(milliseconds: 10000),
+        )
       );
 
       if (response.statusCode == 200 && response.data['status'] == true) {
@@ -37,11 +46,17 @@ class ApiService {
 
   Future<void> logout(String token) async {
     try {
-      await _dio.get('/logout',
-          options: Options(headers: {
+      await _dio.get(
+        '/logout',
+          options: Options(
+            headers: {
             'Accept': 'application/json',
             'Authorization': 'Bearer $token'
-          }));
+            },
+            sendTimeout: const Duration(milliseconds: 10000),
+            receiveTimeout: const Duration(milliseconds: 10000),
+          ),
+        );
     } on DioException catch (e) {
       if (e.response != null) {
         print('Error response status: ${e.response?.statusCode}');
@@ -61,6 +76,13 @@ class ApiService {
           'email': email,
           'password': password,
         }),
+        options: Options(
+          headers: {
+            'Accept': 'application/json',
+          },
+          sendTimeout: const Duration(milliseconds: 10000),
+          receiveTimeout: const Duration(milliseconds: 10000),
+        ),
       );
 
       if (response.statusCode == 200 && response.data['status'] == true) {
@@ -76,6 +98,37 @@ class ApiService {
         print('Error sending request : $e');
       }
       return {'status': false, 'message': 'Error sending request: $e'};
+    }
+  }
+
+  Future<String> fetchUserName() async  {
+    try {
+      final sharedPreferences= await SharedPreferences.getInstance();
+      final token = sharedPreferences.getString('token');
+
+      if (token == null) {
+        print('Token not found');
+      }
+
+      Response response = await _dio.get(
+        '/showCurrent',
+        options: Options(
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['name'];
+      } else {
+        throw Exception('Failed to load user name');
+      }
+
+    } on DioException catch (e) {
+      print(e);
+      return 'User';
     }
   }
 }

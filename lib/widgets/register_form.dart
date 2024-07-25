@@ -65,6 +65,7 @@ class _RegisterFormState extends State<RegisterForm> {
           _emailController.text, 
           _passwordController.text
         );
+        Navigator.of(context).pushReplacementNamed('/login');
         print(result);
 
       } on DioException catch (e) {
@@ -77,70 +78,72 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    return PasswordProvider(
-      passwordController: _passwordController,
-      child: Container(
-        padding: const EdgeInsets.all(20),  
-        color: primaryBody,
-        child: 
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
+    return SingleChildScrollView(
+      child: PasswordProvider(
+        passwordController: _passwordController,
+        child: Container(
+          padding: const EdgeInsets.all(20),  
+          color: primaryBody,
+          child: 
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, bottom: 12.5),
+                        child: CustomFormField(
+                          controller: _namecontroller, 
+                          prefixIcon: const Icon(Icons.person_outline_rounded), 
+                          hintText: 'Your Name',
+                        ),
+                      ),
+                      CustomFormField(
+                      controller: _emailController, 
+                      prefixIcon: const Icon(Icons.email_outlined), 
+                      hintText: 'Enter your email',
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        } 
+                        const emailRegex = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+                        final RegExp emailExp = RegExp(emailRegex);
+                        if (!emailExp.hasMatch(value)) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
+                    ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 20, bottom: 12.5),
+                      padding: const EdgeInsets.symmetric(vertical: 12.5),
                       child: CustomFormField(
-                        controller: _namecontroller, 
-                        prefixIcon: const Icon(Icons.person_outline_rounded), 
-                        hintText: 'Your Name',
+                        controller: _passwordController, 
+                        prefixIcon: const Icon(Icons.lock_outline_rounded), 
+                        suffixIcon: const Icon(Icons.visibility_off),
+                        hintText: 'Enter your password',
+                        isPassword: true,
+                        validator: passwordValidator,
                       ),
                     ),
                     CustomFormField(
-                    controller: _emailController, 
-                    prefixIcon: const Icon(Icons.email_outlined), 
-                    hintText: 'Enter your email',
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      } 
-                      const emailRegex = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
-                      final RegExp emailExp = RegExp(emailRegex);
-                      if (!emailExp.hasMatch(value)) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.5),
-                    child: CustomFormField(
-                      controller: _passwordController, 
+                      controller: _confirmPasswordController, 
                       prefixIcon: const Icon(Icons.lock_outline_rounded), 
                       suffixIcon: const Icon(Icons.visibility_off),
-                      hintText: 'Enter your password',
+                      hintText: 'Confirm your password',
                       isPassword: true,
-                      validator: passwordValidator,
+                      validator: confirmPasswordValidator,
                     ),
-                  ),
-                  CustomFormField(
-                    controller: _confirmPasswordController, 
-                    prefixIcon: const Icon(Icons.lock_outline_rounded), 
-                    suffixIcon: const Icon(Icons.visibility_off),
-                    hintText: 'Confirm your password',
-                    isPassword: true,
-                    validator: confirmPasswordValidator,
-                  ),
-                ],
-              )
-            ),
-            const SizedBox(height: 20),
-            ValidatorAnimation(onPressed: registerUser,),
-          ],
-        )
+                  ],
+                )
+              ),
+              const SizedBox(height: 20),
+              ValidatorAnimation(onPressed: registerUser,),
+            ],
+          )
+        ),
       ),
     );
   }

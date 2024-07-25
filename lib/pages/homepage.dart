@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:sanctum_mobile/services/api_service.dart';
 import 'package:sanctum_mobile/services/shared_preferences.dart';
+import 'package:sanctum_mobile/util/color.dart';
+import 'package:sanctum_mobile/widgets/common/get_current_user.dart';
 import 'package:sanctum_mobile/widgets/common/loading_indicator.dart';
 
 class Homepage extends StatefulWidget {
@@ -48,41 +50,70 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "HomePage",
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
+        leading: Transform.translate(
+          offset: const Offset(10, 0),
+          child: Image.asset(
+            'assets/images/medical-logo.png',
+            width: 40,
+            height: 40,
           ),
         ),
-        centerTitle: true,
+        title: Row(
+          children: [
+            const Text(
+              "e-Klinik",
+              style: TextStyle(
+                fontSize: 24,
+                color: primaryHeader,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              width: 170,
+            ),
+            IconButton(
+              onPressed: () {}, 
+              icon: const Icon(
+                Icons.calendar_today_rounded,
+                size: 25,
+              ),
+            ),
+            IconButton(
+              onPressed: () {}, 
+              icon: const Icon(
+                Icons.notifications_none_rounded,
+                size: 30,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Stack(
         children: [
-          Column(
-            children: [
-              const Text(
-                "PENCET DIBAWAH INI",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const GetCurrentUser(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        backgroundColor: Colors.red),
+                    onPressed: () {
+                      _logout(context);
+                    },
+                    child: const Text("Logout"),
+                  )
+                ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    backgroundColor: Colors.red),
-                onPressed: () {
-                  _logout(context);
-                },
-                child: const Text("Logout"),
-              )
-            ],
+            ),
           ),
           ValueListenableBuilder<bool>(
             valueListenable: _isLoading, 

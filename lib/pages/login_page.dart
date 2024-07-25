@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sanctum_mobile/blocs/auth/auth_bloc.dart';
 import 'package:sanctum_mobile/services/api_service.dart';
 import 'package:sanctum_mobile/services/shared_preferences.dart';
 import 'package:sanctum_mobile/util/color.dart';
@@ -15,7 +17,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final ApiService apiService = ApiService();
+  // final ApiService apiService = ApiService();
   final ValueNotifier<bool> _isLoading = ValueNotifier(false);
 
   @override
@@ -33,68 +35,71 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-          body: Stack(
-            children: [
-              Column(
-                children: [
-                  Container(
-                    color: Colors.white,
-                    width: MediaQuery.of(context).size.width,
-                    padding: const EdgeInsets.only(top: 50,),
-                    child: const Column(
-                      mainAxisSize: MainAxisSize.min,       
-                      children: [
-                        LoginHeader(),
-                        TabBar(  
-                          labelColor: tabBarIndicator,
-                          indicatorColor: tabBarIndicator,
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          unselectedLabelColor: labelUnselected,
-                          labelStyle: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500
-                          ),
-                          tabs: [
-                            Tab(
-                              text: 'Login',
+    return BlocProvider(
+      create: (context) => AuthBloc(),
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+            body: Stack(
+              children: [
+                Column(
+                  children: [
+                    Container(
+                      color: Colors.white,
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.only(top: 50,),
+                      child: const Column(
+                        mainAxisSize: MainAxisSize.min,       
+                        children: [
+                          LoginHeader(),
+                          TabBar(  
+                            labelColor: tabBarIndicator,
+                            indicatorColor: tabBarIndicator,
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            unselectedLabelColor: labelUnselected,
+                            labelStyle: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500
                             ),
-                            Tab(
-                              text: 'Register',
-                            )
-                          ],
-                        ),
-                      ],
+                            tabs: [
+                              Tab(
+                                text: 'Login',
+                              ),
+                              Tab(
+                                text: 'Register',
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        LoginForm(
-                          apiService: apiService,
-                          isLoading: _isLoading,
-                        ),
-                        RegisterForm(
-                          apiService: apiService,
-                          isLoading: _isLoading,
-                        ),
-                      ]
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          LoginForm(
+                          ),
+                          Center(
+                            child: Text('Register Form'),
+                          )
+                          // RegisterForm(
+                          //   apiService: apiService,
+                          //   isLoading: _isLoading,
+                          // ),
+                        ]
+                      ),
                     ),
-                  ),
-               ],
-              ),
-              ValueListenableBuilder<bool>(
-                valueListenable: _isLoading,
-                builder: (context, isLoading, child) {
-                  return isLoading ? const LoadingIndicator() : const SizedBox.shrink();
-                },
-              ),
-            ],
-          ),
-      )
+                 ],
+                ),
+                ValueListenableBuilder<bool>(
+                  valueListenable: _isLoading,
+                  builder: (context, isLoading, child) {
+                    return isLoading ? const LoadingIndicator() : const SizedBox.shrink();
+                  },
+                ),
+              ],
+            ),
+        )
+      ),
     );
   }
 }

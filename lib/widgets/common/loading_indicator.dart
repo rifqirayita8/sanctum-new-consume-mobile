@@ -6,11 +6,13 @@ class LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black54,
-      child: const Center(
-        child: CircularProgressIndicator(
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        color: Colors.black.withOpacity(0.3),
+        child: const CircularProgressIndicator(
           backgroundColor: confirmButton,
+          color: primaryHeader,
         ),
       ),
     );

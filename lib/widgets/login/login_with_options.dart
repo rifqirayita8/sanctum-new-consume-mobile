@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 class LoginWith extends StatelessWidget {
   final String label;
   final String urlImage;
+  final Function()? onPressed;
+  
   const LoginWith({
     super.key, 
     required this.urlImage,
-    required this.label,
+    required this.label, 
+    this.onPressed,
     });
 
   @override
@@ -19,7 +22,11 @@ class LoginWith extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: ElevatedButton(
-        onPressed: () {}, 
+        onPressed: () {
+          if (onPressed != null) {
+            onPressed!();
+          }
+        }, 
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(

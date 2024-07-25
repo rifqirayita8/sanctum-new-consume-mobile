@@ -12,9 +12,13 @@ class LoginHeader extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center ,
           children: [
-            Image.asset('assets/images/medical-logo.png', width: 50, height: 50),
+            Image.asset('assets/images/medical-logo.png',
+             width: 50, 
+             height: 50
+            ),
             const Text(
-              'e-Klinik', style: TextStyle(
+              'e-Klinik', 
+              style: TextStyle(
                 fontSize: 28, 
                 color: primaryHeader, 
                 fontWeight: FontWeight.bold
@@ -36,7 +40,8 @@ class LoginHeader extends StatelessWidget {
             textAlign: TextAlign.center,
             'Sign in or register below to access to our features', 
             style: TextStyle(
-              fontSize: 16, color: shadesGrey
+              fontSize: 16, 
+              color: shadesGrey
               ),
             ),
         ),
