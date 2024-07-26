@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sanctum_mobile/blocs/auth/auth_bloc.dart';
-import 'package:sanctum_mobile/services/api_service.dart';
+import 'package:sanctum_mobile/blocs/auth/auth_state.dart';
 import 'package:sanctum_mobile/services/shared_preferences.dart';
 import 'package:sanctum_mobile/util/color.dart';
 import 'package:sanctum_mobile/widgets/common/loading_indicator.dart';
@@ -17,8 +17,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // final ApiService apiService = ApiService();
-  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
 
   @override
   void initState() {
@@ -73,27 +71,22 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
-                    Expanded(
+                    const Expanded(
                       child: TabBarView(
                         children: [
-                          LoginForm(
-                          ),
-                          Center(
-                            child: Text('Register Form'),
-                          )
-                          // RegisterForm(
-                          //   apiService: apiService,
-                          //   isLoading: _isLoading,
-                          // ),
+                          LoginForm(),
+                          RegisterForm()
                         ]
                       ),
                     ),
                  ],
                 ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: _isLoading,
-                  builder: (context, isLoading, child) {
-                    return isLoading ? const LoadingIndicator() : const SizedBox.shrink();
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return const LoadingIndicator();
+                    }
+                    return const SizedBox.shrink();
                   },
                 ),
               ],

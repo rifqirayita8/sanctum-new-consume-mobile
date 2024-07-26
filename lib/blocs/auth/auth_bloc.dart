@@ -42,10 +42,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await sharedPreferences.setString('token', token);
 
         } else {
-          emit(AuthFailure(message: response.data['message']));
+          emit(AuthFailure(message: response.data['message'] ?? 'An error occurred'));
         }
       } on DioException catch(e) {
-        emit(AuthFailure(message: 'Error: $e'));
+        final errorMessage= e.response?.data['message'] ?? 'An error occurred';
+        emit(AuthFailure(message: errorMessage));
+      } catch(e) {
+        emit(AuthFailure(message: 'An unknown error occurred'));
       }
     }
 
@@ -98,7 +101,43 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (response.statusCode == 200 && response.data['status'] == true) {
           emit(AuthSuccess(token: response.data['token']));
         } else {
-          emit(AuthFailure(message: response.data['message']));
+          emit(AuthFailure(message: response.data['message'] ?? 'An error occurred'));
+          print(response.data['errors']);
+        }
+      } on DioException catch(e) {
+        final errorMessage= e.response?.data['message'] ?? 'An error occurred';
+        emit(AuthFailure(message: errorMessage));
+      } catch(e) {
+        emit(AuthFailure(message: 'An unknown error occurred'));
+      }
+    }
+
+    Future<void> _onFetchUserEvent(FetchUserName event, Emitter<AuthState> emit) async {
+      emit(AuthLoading());
+      try {
+        final sharedPreferences = await SharedPreferences.getInstance();
+        final token = sharedPreferences.getString('token');
+        if (token != null) {
+          final response = await _dio.get(
+            '/showCurrent',
+            options: Options(
+              headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer $token',
+              },
+              sendTimeout: const Duration(milliseconds: 10000),
+              receiveTimeout: const Duration(milliseconds: 10000),
+            ),
+          );
+          
+          if (response.statusCode == 200){
+            final userName = response.data['name'];
+            emit(UserFetchSuccess(userName: userName));
+          } else {
+            emit(AuthFailure(message: 'Failed to load username'));
+          }
+        } else {
+          emit(AuthFailure(message: 'No token found'));
         }
       } on DioException catch(e) {
         emit(AuthFailure(message: 'Error: $e'));

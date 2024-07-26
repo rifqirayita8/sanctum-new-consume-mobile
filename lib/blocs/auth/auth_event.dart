@@ -11,7 +11,10 @@ class LoginEvent extends AuthEvent {
   final String email;
   final String password;
 
-  LoginEvent({required this.email, required this.password});
+  LoginEvent({
+    required this.email, 
+    required this.password
+    });
 
   @override
   List<Object> get props => [email, password];
@@ -24,8 +27,8 @@ class RegisterEvent extends AuthEvent {
   final String email;
   final String password;
 
-  RegisterEvent(
-    this.name, {
+  RegisterEvent({
+    required this.name, 
     required this.email,
     required this.password,
   });
@@ -33,3 +36,5 @@ class RegisterEvent extends AuthEvent {
   @override
   List<Object> get props => [name, email, password];
 }
+
+class FetchUserName extends AuthEvent {}

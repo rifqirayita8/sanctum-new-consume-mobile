@@ -8,3 +8,4 @@ const Color confirmButton= Color(0xFFC2E96A);
 const Color labelUnselected= Color(0xFFADADAD);
 const Color outlineConfirmButton= Color(0xFFC0E967);
 const Color outlineConfirmButton2= Color(0xFFF4F4F4);
+const Color danger = Colors.red;

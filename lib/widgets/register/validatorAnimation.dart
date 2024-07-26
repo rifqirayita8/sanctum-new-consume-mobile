@@ -79,15 +79,15 @@ class _ValidatorAnimationState extends State<ValidatorAnimation> {
                 ),
               ),
             ),
-            SizedBox(width: 10),
-            Text('At least 8 characters'),
+            const SizedBox(width: 10),
+            const Text('At least 8 characters'),
           ],
         ),
         const SizedBox(height: 10),
         Row(
           children: [
             AnimatedContainer(
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               width: 20,
               height: 20,
               decoration: BoxDecoration(
@@ -105,8 +105,8 @@ class _ValidatorAnimationState extends State<ValidatorAnimation> {
                 ),
               ),
             ),
-            SizedBox(width: 10),
-            Text('At least 1 number'),
+            const SizedBox(width: 10),
+            const Text('At least 1 number'),
           ],
         ),
         const SizedBox(height: 10),
